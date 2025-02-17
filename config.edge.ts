@@ -1,22 +1,7 @@
 import type { AppConfig } from "./lib/edge/types.ts";
 
-export const appConfig: AppConfig = {
-  OPENAI_API_KEY: Netlify.env.get("OPENAI_API_KEY") ?? "",
-
-  historyLength: 8,
-  maxMessageLength: 1000,
-
-  apiConfig: {
-    model: "gpt-3.5-turbo-1106",
-  },
-
-  systemPrompt: (_req, context) => {
-    return generateResponse(_req.body?.message || ""); // Appel à une fonction qui cherche dans le JSON
-  }
-};
-
 // Définition des données JSON en tant qu'objet JavaScript
-const supportData = {
+const data = {
   site: "e-marketpara.ma",
   nom: "Market Para",
   slogan: "Votre Parapharmacie en ligne",
@@ -72,13 +57,37 @@ const supportData = {
   ]
 };
 
-// Fonction qui recherche une réponse dans l'objet JSON
-function generateResponse(userMessage: string): string {
-  const found = supportData.categories.find(category =>
-    userMessage.toLowerCase().includes(category.toLowerCase())
-  );
+// Génération du prompt à partir des données JSON
+const prompt = `Bienvenue chez ${data.nom} - ${data.slogan} !
+📍 Localisation : ${data.location}
+📞 Contact : ${data.contact.phone1}, ${data.contact.email}
 
-  return found
-    ? `Nous proposons des produits dans la catégorie "${found}".`
-    : "Je suis désolé, je ne trouve pas la réponse à votre question. Veuillez contacter notre support.";
-}
+📦 Livraison :
+- Tanger : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}
+- Hors Tanger : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}
+
+🔄 Retours :
+- Délai max : ${data.services.retours.delai_max}
+- Conditions : ${data.services.retours.etat_du_produit}
+- Procédure : ${data.services.retours.procesus}
+
+🛍️ Catégories disponibles : ${data.categories.join(", ")}
+
+Voici quelques produits en promotion :
+${data.produits.map(p => `- **${p.nom}** : ~~${p.prix_initial}~~ -> **${p.prix_reduit}** (${p.remise})`).join("\n")}
+
+Besoin d'aide ? Demandez-moi !`;
+
+export const appConfig: AppConfig = {
+  OPENAI_API_KEY: Netlify.env.get("OPENAI_API_KEY") ?? "",
+  historyLength: 8,
+  maxMessageLength: 1000,
+  apiConfig: {
+    model: "gpt-3.5-turbo-1106",
+  },
+  systemPrompt: (_req, context) => `${prompt}
+  Respond with valid markdown.
+  Knowledge cutoff: September 2021.
+  Current date: ${new Date().toDateString()}.
+  User location: ${context.geo.city}, ${context.geo.country}.`
+};
