@@ -1,5 +1,5 @@
 import type { AppConfig } from "./lib/edge/types.ts";
-import supportData from "./data/support-data.json"; // Charger les données JSON
+import supportData from "data.json"; // Charger les données JSON
 
 export const appConfig: AppConfig = {
   OPENAI_API_KEY: Netlify.env.get("OPENAI_API_KEY") ?? "",
