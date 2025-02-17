@@ -1,6 +1,6 @@
 import type { AppConfig } from "./lib/edge/types.ts";
 
-// Définition des données JSON en tant qu'objet JavaScript
+// Données de la marque Market Para
 const data = {
   site: "e-marketpara.ma",
   nom: "Market Para",
@@ -57,27 +57,50 @@ const data = {
   ]
 };
 
-// Génération du prompt à partir des données JSON
-const prompt = `Bienvenue chez ${data.nom} - ${data.slogan} !
-📍 Localisation : ${data.location}
-📞 Contact : ${data.contact.phone1}, ${data.contact.email}
+// Fonction pour générer une réponse commerciale et support client
+function generateResponse(userMessage: string): string {
+  const message = userMessage.toLowerCase();
 
-📦 Livraison :
-- Tanger : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}
-- Hors Tanger : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}
+  // Vérifier si l'utilisateur pose une question sur un produit
+  const produitTrouvé = data.produits.find(p => message.includes(p.nom.toLowerCase()));
+  if (produitTrouvé) {
+    return `🛍️ **${produitTrouvé.nom}** est disponible !  
+Prix habituel : ~~${produitTrouvé.prix_initial}~~  
+**Prix promo** : **${produitTrouvé.prix_reduit}** (-${produitTrouvé.remise})  
+Souhaitez-vous passer commande ? 😊`;
+  }
 
-🔄 Retours :
-- Délai max : ${data.services.retours.delai_max}
-- Conditions : ${data.services.retours.etat_du_produit}
-- Procédure : ${data.services.retours.procesus}
+  // Vérifier les questions sur la livraison
+  if (message.includes("livraison")) {
+    return `🚚 **Infos livraison** :  
+- 📍 **Tanger** : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}  
+- 📦 **Hors Tanger** : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}  
+📌 *Les délais peuvent varier selon la disponibilité des produits.*  
+Besoin d'aide ?`;
+  }
 
-🛍️ Catégories disponibles : ${data.categories.join(", ")}
+  // Vérifier les questions sur les retours
+  if (message.includes("retour") || message.includes("remboursement")) {
+    return `🔄 **Retour produit** :  
+Vous avez **${data.services.retours.delai_max}** jours pour retourner un produit, à condition qu'il soit **non utilisé et dans son emballage d'origine**.  
+Les frais de retour sont **à votre charge**. Contactez-nous pour plus d’infos !`;
+  }
 
-Voici quelques produits en promotion :
-${data.produits.map(p => `- **${p.nom}** : ~~${p.prix_initial}~~ -> **${p.prix_reduit}** (${p.remise})`).join("\n")}
+  // Vérifier les demandes de contact
+  if (message.includes("contact") || message.includes("email") || message.includes("téléphone")) {
+    return `📞 **Contact Market Para** :  
+📍 Adresse : ${data.contact.adresse}  
+📧 Email : ${data.contact.email}  
+📱 Téléphone : ${data.contact.phone1} / ${data.contact.phone2}  
+Nous sommes à votre service !`;
+  }
 
-Besoin d'aide ? Demandez-moi !`;
+  // Par défaut, réponse générique
+  return `Bienvenue chez **${data.nom}** 🏪 !  
+Besoin d'aide ? Posez-moi vos questions sur les produits, la livraison ou les retours. 😊`;
+}
 
+// Configuration de l'application
 export const appConfig: AppConfig = {
   OPENAI_API_KEY: Netlify.env.get("OPENAI_API_KEY") ?? "",
   historyLength: 8,
@@ -85,9 +108,5 @@ export const appConfig: AppConfig = {
   apiConfig: {
     model: "gpt-3.5-turbo-1106",
   },
-  systemPrompt: (_req, context) => `${prompt}
-  Respond with valid markdown.
-  Knowledge cutoff: September 2021.
-  Current date: ${new Date().toDateString()}.
-  User location: ${context.geo.city}, ${context.geo.country}.`
+  systemPrompt: (_req, context) => generateResponse(_req.body?.message || "")
 };
