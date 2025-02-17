@@ -1,46 +1,32 @@
-import { AppConfig } from "./lib/edge/types.ts";
+import type { AppConfig } from "./lib/edge/types.ts";
+
 import { prompt } from "./prompts/movie-critic.ts";
 // import { prompt } from "./prompts/tour-guide.ts";
-import fs from "fs";
-
-// Charger les données depuis un fichier JSON
-const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
 
 export const appConfig: AppConfig = {
-  // Cette clé API doit être définie dans une variable d'environnement
-  // Voir https://platform.openai.com/account/api-keys
+  // This should be set in an environment variable
+  // See https://platform.openai.com/account/api-keys
   OPENAI_API_KEY: Netlify.env.get("OPENAI_API_KEY") ?? "",
 
-  // Le nombre maximum de messages à envoyer à l'API
+  // The maximum number of message in the history to send to the API
+  // You should also set this in the config.browser.ts file.
   historyLength: 8,
 
-  // La longueur maximale en caractères de chaque message envoyé à l'API
+  // The maximum length in characters of each message sent to the API
+  // You should also set this in the config.browser.ts file.
   maxMessageLength: 1000,
 
-  // La configuration de l'API envoyée à OpenAI
+  // The config values sent to the OpenAI API
+  // See https://platform.openai.com/docs/api-reference/chat/create
   apiConfig: {
     model: "gpt-3.5-turbo-1106",
   },
 
-  // Ce qui fait fonctionner la magie. Voir le README pour plus de détails.
-  systemPrompt: (_req, context) => {
-    // Extraire des informations du fichier JSON
-    const products = data.produits.map(product => `${product.nom}: ${product.prix_reduit} DH`);
-    const services = data.services.livraison ? `Livraison disponible : ${data.services.livraison.Tanger.delai} jours à Tanger` : "Livraison indisponible";
-
-    return `
-      ${prompt}
-      Voici les informations sur le site Market Para :
-
-      **Produits en Promotion :**
-      ${products.join("\n")}
-
-      **Services :**
-      ${services}
-
-      Répondez avec des informations en markdown valide. La date de connaissance est septembre 2021.
-      Date actuelle : ${new Date().toDateString()}.
-      L'utilisateur est situé à ${context.geo.city}, ${context.geo.country}.
-    `;
-  },
+  // This is where the magic happens. See the README for details
+  // This can be a plain string if you'd prefer, or you can use
+  // information from the request or context to generate it.
+  systemPrompt: (_req, context) => ${prompt}
+Respond with valid markdown. Knowledge cutoff September 2021.
+Current date: ${new Date().toDateString()}.
+User location: ${context.geo.city}, ${context.geo.country},
 };
