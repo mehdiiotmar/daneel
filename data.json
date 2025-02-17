@@ -1,1 +1,85 @@
-
+{
+  "site": "e-marketpara.ma",
+  "nom": "Market Para",
+  "slogan": "Votre Parapharmacie en ligne",
+  "location": "Tanger, Maroc",
+  "contact": {
+    "adresse": "49 Avenue Moulay Abdellah Lot 48 RDC, Tanger – Maroc",
+    "phone1": "0666 477 577",
+    "phone2": "0662 082 042",
+    "email": "contact@e-marketpara.ma"
+  },
+  "services": {
+    "livraison": {
+      "Tanger": {
+        "frais": "25 Dh",
+        "delai": "1 à 2 jours ouvrables"
+      },
+      "hors_Tanger": {
+        "frais": "35 Dh",
+        "delai": "1 à 3 jours ouvrables"
+      },
+      "note": "Les délais de livraison peuvent varier en fonction de la disponibilité des produits et des conditions météorologiques."
+    },
+    "retours": {
+      "delai_max": "7 jours",
+      "etat_du_produit": "doit être dans son état d'origine et non utilisé",
+      "frais": "à la charge du client",
+      "procesus": "Contactez le service clientèle pour les instructions."
+    }
+  },
+  "conditions_generales": {
+    "licence_utilisation": "Accès limité et non exclusif pour un usage personnel et non commercial.",
+    "propriete_intellectuelle": "Tous les contenus sur le site sont protégés par le droit d'auteur et autres lois.",
+    "utilisation_interdite": [
+      "Utilisation du site de manière compromettant sa sécurité ou intégrité.",
+      "Contenu illégal, abusif, diffamatoire ou obscène.",
+      "Utilisation commerciale sans autorisation explicite."
+    ],
+    "limitation_responsabilite": "Le site ne garantit pas l'exactitude ou l'exhaustivité des informations, utilisation à vos risques.",
+    "modification_conditions": "Le site se réserve le droit de modifier les conditions d'utilisation sans préavis.",
+    "droit_applicable": "Les lois du Maroc régissent ces conditions, litiges soumis aux tribunaux marocains."
+  },
+  "categories": [
+    "Soins de Visage",
+    "Corps",
+    "Cheveux",
+    "Compléments alimentaires",
+    "Soins pour hommes",
+    "Hygiène",
+    "Maman et bébés",
+    "Solaires"
+  ],
+  "produits": [
+    {
+      "nom": "3 Chênes Color & Soin Coloration permanente 10A Blond Clair Cendré",
+      "prix_initial": "189.00 dh",
+      "prix_reduit": "120.00 dh",
+      "remise": "37%"
+    },
+    {
+      "nom": "3 Chênes Color & Soin Coloration permanente 10N Blond Platine",
+      "prix_initial": "189.00 dh",
+      "prix_reduit": "120.00 dh",
+      "remise": "37%"
+    },
+    {
+      "nom": "3 Chênes Color & Soin Coloration permanente 10R Rouge Flamboyant",
+      "prix_initial": "189.00 dh",
+      "prix_reduit": "120.00 dh",
+      "remise": "37%"
+    },
+    {
+      "nom": "3 Chênes Color & Soin Coloration permanente 11A Blond Sable Cendré",
+      "prix_initial": "189.00 dh",
+      "prix_reduit": "120.00 dh",
+      "remise": "37%"
+    },
+    {
+      "nom": "3 Chênes Color & Soin Coloration permanente 11R Rouge Myrtille",
+      "prix_initial": "189.00 dh",
+      "prix_reduit": "120.00 dh",
+      "remise": "37%"
+    }
+  ]
+}
