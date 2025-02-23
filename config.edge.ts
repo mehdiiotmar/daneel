@@ -14,8 +14,14 @@ const data = {
   },
   services: {
     livraison: {
-      Tanger: { frais: "25 Dh", delai: "1 à 2 jours ouvrables" },
-      hors_Tanger: { frais: "35 Dh", delai: "1 à 3 jours ouvrables" },
+      Tanger: {
+        frais: "25 Dh",
+        delai: "1 à 2 jours ouvrables"
+      },
+      hors_Tanger: {
+        frais: "35 Dh",
+        delai: "1 à 3 jours ouvrables"
+      },
       note: "Les délais de livraison peuvent varier en fonction de la disponibilité des produits et des conditions météorologiques."
     },
     retours: {
@@ -51,35 +57,33 @@ const data = {
   ]
 };
 
-// Fonction de réponse client 100% basée sur les données
-function generateResponse(userMessage: string): string {
-  const message = userMessage.toLowerCase();
+// Prompt système strict pour guider le bot
+const systemPrompt = `
+Tu es un expert en support client et en vente pour la parapharmacie Market Para.
 
-  // Vérifier si l'utilisateur demande un produit
-  for (const produit of data.produits) {
-    if (message.includes(produit.nom.toLowerCase())) {
-      return `🛍️ **${produit.nom}** est disponible !\nPrix habituel : ~~${produit.prix_initial}~~\n**Prix promo** : **${produit.prix_reduit}** (-${produit.remise})\nSouhaitez-vous passer commande ? 😊`;
-    }
-  }
+🔹 **Ton objectif** :
+- Répondre uniquement en te basant sur les données fournies.
+- Ne jamais inventer ou supposer des informations absentes des données.
+- Adopter un ton chaleureux, souriant et engageant.
+- Guider les clients vers l'achat ou les services proposés.
+- Fournir les informations de contact lorsque c'est pertinent.
 
-  // Vérifier les questions sur la livraison
-  if (message.includes("livraison")) {
-    return `🚚 **Infos livraison** :\n- 📍 **Tanger** : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}\n- 📦 **Hors Tanger** : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}\n📌 *Les délais peuvent varier.* Besoin d'aide ?`;
-  }
+🔹 **Règles strictes** :
+- Si une question concerne un sujet absent des données, réponds : "Je suis désolé, mais je n'ai pas cette information. Contactez-nous pour plus de détails !"
+- Ne jamais mentionner que tu es une IA.
+- Toujours inclure une proposition d'achat ou de contact si pertinent.
 
-  // Vérifier les questions sur les retours
-  if (message.includes("retour") || message.includes("remboursement")) {
-    return `🔄 **Retour produit** :\nVous avez **${data.services.retours.delai_max}** jours pour retourner un produit, à condition qu'il soit **non utilisé et dans son emballage d'origine**.\nLes frais de retour sont **à votre charge**. Contactez-nous pour plus d’infos !`;
-  }
+🔹 **Exemples de réponses adaptées** :
+✅ Si un client demande un produit existant :
+"Bien sûr ! 🛍️ **3 Chênes Color & Soin Coloration permanente 10A Blond Clair Cendré** est disponible ! Son prix en promotion est **120.00 dh** (-37%). Souhaitez-vous finaliser votre commande ? 😊"
 
-  // Vérifier les demandes de contact
-  if (message.includes("contact") || message.includes("email") || message.includes("téléphone")) {
-    return `📞 **Contact Market Para** :\n📍 Adresse : ${data.contact.adresse}\n📧 Email : ${data.contact.email}\n📱 Téléphone : ${data.contact.phone1} / ${data.contact.phone2}\nNous sommes à votre service !`;
-  }
+✅ Si un client demande un produit absent :
+"Je suis désolé, mais je n'ai pas cette information. Contactez-nous au **0666 477 577** pour en savoir plus ! 📞"
 
-  // Si la question ne correspond à aucune donnée
-  return `❌ Je suis désolé, mais je ne peux répondre qu'aux questions basées sur les informations disponibles. N'hésitez pas à me demander sur nos produits, la livraison ou le contact. 😊`;
-}
+✅ Si un client pose une question sur la livraison :
+"🚚 Nous livrons partout au Maroc ! À Tanger, les frais sont **25 Dh** (1 à 2 jours), et hors Tanger, c'est **35 Dh** (1 à 3 jours). Besoin d'autres infos ? 😊"
+
+Maintenant, prête à aider ! 🚀`;
 
 // Configuration de l'application
 export const appConfig: AppConfig = {
@@ -89,5 +93,5 @@ export const appConfig: AppConfig = {
   apiConfig: {
     model: "gpt-3.5-turbo-1106",
   },
-  systemPrompt: (_req, context) => generateResponse(_req.body?.message || "")
+  systemPrompt: () => systemPrompt
 };
