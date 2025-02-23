@@ -14,14 +14,8 @@ const data = {
   },
   services: {
     livraison: {
-      Tanger: {
-        frais: "25 Dh",
-        delai: "1 à 2 jours ouvrables"
-      },
-      hors_Tanger: {
-        frais: "35 Dh",
-        delai: "1 à 3 jours ouvrables"
-      },
+      Tanger: { frais: "25 Dh", delai: "1 à 2 jours ouvrables" },
+      hors_Tanger: { frais: "35 Dh", delai: "1 à 3 jours ouvrables" },
       note: "Les délais de livraison peuvent varier en fonction de la disponibilité des produits et des conditions météorologiques."
     },
     retours: {
@@ -57,47 +51,34 @@ const data = {
   ]
 };
 
-// Fonction pour générer une réponse commerciale et support client
+// Fonction de réponse client 100% basée sur les données
 function generateResponse(userMessage: string): string {
   const message = userMessage.toLowerCase();
 
-  // Vérifier si l'utilisateur pose une question sur un produit
-  const produitTrouvé = data.produits.find(p => message.includes(p.nom.toLowerCase()));
-  if (produitTrouvé) {
-    return `🛍️ **${produitTrouvé.nom}** est disponible !  
-Prix habituel : ~~${produitTrouvé.prix_initial}~~  
-**Prix promo** : **${produitTrouvé.prix_reduit}** (-${produitTrouvé.remise})  
-Souhaitez-vous passer commande ? 😊`;
+  // Vérifier si l'utilisateur demande un produit
+  for (const produit of data.produits) {
+    if (message.includes(produit.nom.toLowerCase())) {
+      return `🛍️ **${produit.nom}** est disponible !\nPrix habituel : ~~${produit.prix_initial}~~\n**Prix promo** : **${produit.prix_reduit}** (-${produit.remise})\nSouhaitez-vous passer commande ? 😊`;
+    }
   }
 
   // Vérifier les questions sur la livraison
   if (message.includes("livraison")) {
-    return `🚚 **Infos livraison** :  
-- 📍 **Tanger** : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}  
-- 📦 **Hors Tanger** : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}  
-📌 *Les délais peuvent varier selon la disponibilité des produits.*  
-Besoin d'aide ?`;
+    return `🚚 **Infos livraison** :\n- 📍 **Tanger** : ${data.services.livraison.Tanger.frais}, délai ${data.services.livraison.Tanger.delai}\n- 📦 **Hors Tanger** : ${data.services.livraison.hors_Tanger.frais}, délai ${data.services.livraison.hors_Tanger.delai}\n📌 *Les délais peuvent varier.* Besoin d'aide ?`;
   }
 
   // Vérifier les questions sur les retours
   if (message.includes("retour") || message.includes("remboursement")) {
-    return `🔄 **Retour produit** :  
-Vous avez **${data.services.retours.delai_max}** jours pour retourner un produit, à condition qu'il soit **non utilisé et dans son emballage d'origine**.  
-Les frais de retour sont **à votre charge**. Contactez-nous pour plus d’infos !`;
+    return `🔄 **Retour produit** :\nVous avez **${data.services.retours.delai_max}** jours pour retourner un produit, à condition qu'il soit **non utilisé et dans son emballage d'origine**.\nLes frais de retour sont **à votre charge**. Contactez-nous pour plus d’infos !`;
   }
 
   // Vérifier les demandes de contact
   if (message.includes("contact") || message.includes("email") || message.includes("téléphone")) {
-    return `📞 **Contact Market Para** :  
-📍 Adresse : ${data.contact.adresse}  
-📧 Email : ${data.contact.email}  
-📱 Téléphone : ${data.contact.phone1} / ${data.contact.phone2}  
-Nous sommes à votre service !`;
+    return `📞 **Contact Market Para** :\n📍 Adresse : ${data.contact.adresse}\n📧 Email : ${data.contact.email}\n📱 Téléphone : ${data.contact.phone1} / ${data.contact.phone2}\nNous sommes à votre service !`;
   }
 
-  // Par défaut, réponse générique
-  return `Bienvenue chez **${data.nom}** 🏪 !  
-Besoin d'aide ? Posez-moi vos questions sur les produits, la livraison ou les retours. 😊`;
+  // Si la question ne correspond à aucune donnée
+  return `❌ Je suis désolé, mais je ne peux répondre qu'aux questions basées sur les informations disponibles. N'hésitez pas à me demander sur nos produits, la livraison ou le contact. 😊`;
 }
 
 // Configuration de l'application
